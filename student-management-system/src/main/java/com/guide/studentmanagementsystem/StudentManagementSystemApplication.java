@@ -9,7 +9,7 @@ public class StudentManagementSystemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(StudentManagementSystemApplication.class, args);
 
-		System.out.println("Student Management System here");
+		System.out.println("Student Management System here using Thymleaf");
 	}
 
 }
