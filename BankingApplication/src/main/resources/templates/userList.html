@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+</head>
+
+<body>
+    <h2>User Details</h2>
+    <div th:if="${user}">
+        <p>Username: <span th:text="${user.username}"></span></p>
+        <p>Pssword: <span th:text="${user.password}"></span></p>
+    </div>
+    <div th:unless="${user}">
+        <p>User not found</p>
+    </div>
+</body>
+
+</html>
