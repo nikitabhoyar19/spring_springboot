@@ -24,7 +24,7 @@ public class AccountController {
     private AccountServiceImpl acntServiceImpl;
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<Account> getAll() {
         return acntServiceImpl.getAccountDetails();
     }
