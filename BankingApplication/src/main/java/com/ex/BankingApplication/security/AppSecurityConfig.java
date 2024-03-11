@@ -3,6 +3,7 @@ package com.ex.BankingApplication.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -34,34 +35,32 @@ public class AppSecurityConfig {
     	return new UserServiceImpl();
 	}
 
-    @Bean
-    SecurityFilterChain web(HttpSecurity http) throws Exception {
-        http
-                // ...
-                .authorizeHttpRequests(authorize -> authorize
-                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
-                .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/accounts/**").hasRole("ADMIN")
-		).formLogin(withDefaults());
-
-        return http.build();
-    }
-
 //    @Bean
-//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    SecurityFilterChain web(HttpSecurity http) throws Exception {
 //        http
-//                .authorizeHttpRequests(authorizeRequests ->
-//                        authorizeRequests
-//                                .requestMatchers("/accounts/**").permitAll()
-//                                .requestMatchers("/users/**").hasAuthority("ADMIN").anyRequest().authenticated()
-//                )
-//                .formLogin(withDefaults());
-//
-//        // Disable CSRF for specific requests
-//        http.csrf(csrf -> csrf.ignoringRequestMatchers("/users/**"));
+//                // ...
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
+//                .requestMatchers("/users/**").permitAll()
+//                .requestMatchers("/accounts/**").hasRole("ADMIN")
+//		).formLogin(withDefaults());
 //
 //        return http.build();
 //    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/users/**").permitAll()// Permit access to public resources
+                                .requestMatchers("/accounts/**").hasAnyRole("ADMIN")
+                                .anyRequest().authenticated() // All other requests require authentication
+                )
+                .formLogin(withDefaults()); // Enable form login
+
+        return http.build();
+    }
 
 
     @Bean
@@ -75,7 +74,6 @@ public class AppSecurityConfig {
 
     @Bean
     PasswordEncoder pswdEncoder() {
-		
 		return new BCryptPasswordEncoder();
 	}
 	

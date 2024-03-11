@@ -23,6 +23,16 @@ public class UserInfo {
 	
 	private String roles;
 
+	public UserInfo() {
+	}
+
+	public UserInfo(Long userId, String username, String password, String roles) {
+		this.userId = userId;
+		this.username = username;
+		Password = password;
+		this.roles = roles;
+	}
+
 	public Long getUserId() {
 		return userId;
 	}

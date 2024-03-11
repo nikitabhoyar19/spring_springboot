@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserDetailsService{
 	@Autowired
 	private UserRepository userRepo;
 
+	@Autowired
 	private PasswordEncoder pswdEncoder;
 	
 	@Override
