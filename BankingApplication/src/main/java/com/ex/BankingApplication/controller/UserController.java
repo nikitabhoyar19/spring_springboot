@@ -33,7 +33,7 @@ public class UserController {
 	    }
 
 		@PostMapping("/create")
-		public String createUser(@RequestBody UserInfo user) {
+		public String createUsers(@RequestBody UserInfo user) {
 			userService.createUser(user);
 			return "user created";
 		}
@@ -47,12 +47,12 @@ public class UserController {
 	public Optional<UserInfo> getUserDetails(@PathVariable Long id) {
 		return userService.getUserById(id);
 	}
-//	    @PostMapping("/api/user/create")
-//	    public String createUser(@ModelAttribute UserInfo user, Model model) {
-//	        userService.createUser(user);
-//	        model.addAttribute("user", user);
-//	        return "userForm";
-//	    }
+	@PostMapping("/api/user/create")
+	public String createUser(@ModelAttribute UserInfo user, Model model) {
+		userService.createUser(user);
+		model.addAttribute("user", user);
+		return "userForm";
+	}
 
 //	    @GetMapping("/userdetails/{id}")
 //	    public String getUserDetails(@PathVariable Long id, Model model) {
