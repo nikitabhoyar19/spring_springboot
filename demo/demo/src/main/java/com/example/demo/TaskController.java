@@ -40,24 +40,20 @@ public class TaskController {
 	
 	@GetMapping("/{id}")
 	public Optional<Taskitems> getDataById(@PathVariable Long id) {
-		return taskservice.getAll(id);
+		return taskservice.getById(id);
 	}
 	
-	@GetMapping("status/{status}")
-	public List<Taskitems> getDataByStatus(@PathVariable String status) {
-		return taskservice.getTasksByStatus(status);
-	}
 	
-	@PutMapping("/{id}/complete")
-	public ResponseEntity<Taskitems> completeTask(@PathVariable Long id) throws TaskNotFoundException {
-	Taskitems updatedTask = taskservice.updateStatusToComplete(id);
-	if (updatedTask != null) {
-		return ResponseEntity.ok(updatedTask);
-	} 
-	else {
-		return ResponseEntity.notFound().build();
-		}
-	}
+//	@PutMapping("/{id}/complete")
+//	public ResponseEntity<Taskitems> completeTask(@PathVariable Long id) throws TaskNotFoundException {
+//	Taskitems updatedTask = taskservice.updateStatusToComplete(id);
+//	if (updatedTask != null) {
+//		return ResponseEntity.ok(updatedTask);
+//	} 
+//	else {
+//		return ResponseEntity.notFound().build();
+//		}
+//	}
 	
 	@GetMapping("/filter") 
 	public List<Taskitems> filterTasks(
@@ -76,8 +72,24 @@ public class TaskController {
 		return new ResponseEntity<>(taskdependency1, HttpStatus.CREATED);
 	}
 	
+	@PutMapping("/{taskid}/completeit")
+	public ResponseEntity<String> markTaskAsCompleted(@PathVariable("taskid") Long taskId) {
+		
+		Taskitems task = taskservice.getById(taskId).orElse(null);
+		
+		if(task == null) return ResponseEntity.notFound().build();
+		
+		Taskitems completedTask = taskservice.markTaskAsCompleted(taskId, task);
+        if (completedTask == null) {
+            String errorMessage = "Task is dependent on some other TaskId"; // Custom error message
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+        }
+		
+		else { return ResponseEntity.ok("Task set to completed");}
+	}
+	
 	//Bonus 
-	@PutMapping("/{taskId}")
+	@PutMapping("/{taskId}/xxx")
     public ResponseEntity<Taskitems> updateTask(@PathVariable Long taskId, @RequestBody Taskitems updatedTask) {
         Taskitems existingTask = taskrepo.findById(taskId).orElse(null);
         if (existingTask == null) {
@@ -85,30 +97,11 @@ public class TaskController {
         }
         existingTask.setDescription(updatedTask.getDescription());
        
+        // it is not working
         existingTask.setDependencies(updatedTask.getDependencies());
         
         // Save the updated task
         Taskitems savedTask = taskrepo.save(existingTask);
-        return ResponseEntity.ok(savedTask);
-    }
-
-    @PutMapping("/{taskId}/completeit")
-    public ResponseEntity<Taskitems> markTaskAsCompleted(@PathVariable Long taskId) {
-        Taskitems task = taskrepo.findById(taskId).orElse(null);
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        // Check if all dependencies are completed
-        for (TaskDependency dependency : task.getDependencies()) {
-            if (!dependency.getDependency().getStatus().equals("Completed")) {
-                return ResponseEntity.status(500).build();
-            }
-        }
-        
-        // All dependencies are completed, mark task as completed
-        task.setStatus("Completed");
-        Taskitems savedTask = taskrepo.save(task);
         return ResponseEntity.ok(savedTask);
     }
 

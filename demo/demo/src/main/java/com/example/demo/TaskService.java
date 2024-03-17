@@ -21,7 +21,7 @@ public class TaskService {
 	@Autowired
 	TaskDependencyRepo taskdependencyrepo;
 	
-	public Optional<Taskitems> getAll(Long id) {
+	public Optional<Taskitems> getById(Long id) {
 		return taskrepo.findById(id);		
 	}
 	
@@ -41,22 +41,6 @@ public class TaskService {
 	
 	public List<Taskitems> getAllTasks() {
 		return taskrepo.findAll();
-	}
-	
-	public List<Taskitems>  getTasksByPriority(String priority) {
-		return taskrepo.findByPriority(priority);
-	}
-	
-	public List<Taskitems>  getTasksByCategory(String category) {
-		return taskrepo.findByCategory(category);
-	}
-	
-	public List<Taskitems> getTasksByStatus(String status) {
-		return taskrepo.findByStatus(status);
-	}
-	
-	public List<Taskitems> getTasksByDueDate(LocalDate duedate) {
-		return taskrepo.findByDuedate(duedate);
 	}
 	
 	public Taskitems updateTask(Taskitems taskitems) {
@@ -82,11 +66,11 @@ public class TaskService {
 	    }
 	}  
 	
-	public Taskitems updateStatusToCompleted(Long id) {
-		Taskitems existing_task = taskrepo.findById(id).orElseThrow();
-	    existing_task.setStatus("Completed");
-	    return taskrepo.save(existing_task);
-	}
+//	public Taskitems updateStatusToCompleted(Long id) {
+//		Taskitems existing_task = taskrepo.findById(id).orElseThrow();
+//	    existing_task.setStatus("Completed");
+//	    return taskrepo.save(existing_task);
+//	}
 	
 	public List<Taskitems> filterTasks(String status, LocalDate duedate, String priority, String category) {
 		
@@ -97,13 +81,11 @@ public class TaskService {
 		}
 		
 		if(duedate != null) {
-			filteredTasks = taskrepo.findByDuedate(duedate);
-	
+			filteredTasks = taskrepo.findByDuedate(duedate);	
 		}
 		
 		if(category != null && !category.isEmpty()) {
 			filteredTasks = taskrepo.findByCategory(category);
-	
 		}
 		
 		if(priority != null && !priority.isEmpty()) {
@@ -111,44 +93,21 @@ public class TaskService {
 		}
 		
 		return filteredTasks;
-		
 	}
-	
-	//Bonus 
-//	@PutMapping("/{taskId}")
-//    public ResponseEntity<Taskitems> updateTask(@PathVariable Long taskId, @RequestBody Taskitems updatedTask) {
-//        Taskitems existingTask = taskrepo.findById(taskId).orElse(null);
-//        if (existingTask == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        existingTask.setDescription(updatedTask.getDescription());
-//       
-//        existingTask.setDependencies(updatedTask.getDependencies());
-//        
-//        // Save the updated task
-//        Taskitems savedTask = taskrepo.save(existingTask);
-//        return ResponseEntity.ok(savedTask);
-//    }
-//
-//    @PutMapping("/{taskId}/complete")
-//    public ResponseEntity<Taskitems> markTaskAsCompleted(@PathVariable Long taskId) {
-//        Taskitems task = taskrepo.findById(taskId).orElse(null);
-//        if (task == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        
-//        // Check if all dependencies are completed
-//        for (TaskDependency dependency : task.getDependencies()) {
-//            if (!dependency.getDependency().getStatus().equals("Completed")) {
-//                return null;
-//            }
-//        }
-//        
-//        // All dependencies are completed, mark task as completed
-//        task.setStatus("Completed");
-//        Taskitems savedTask = taskrepo.save(task);
-//        return ResponseEntity.ok(savedTask);
-//    }
-	
+
+	public Taskitems markTaskAsCompleted(Long taskId, Taskitems task) {
+		
+        // Checking if all dependencies are completed
+	    for (TaskDependency dependency : task.getDependencies()) {
+	        if (!dependency.getDependency().getStatus().equals("Completed")) {
+	            return null;
+	        }
+	    }
+	    
+	    // If all dependencies are completed, marking task as completed
+	    task.setStatus("Completed");
+	    Taskitems savedTask = taskrepo.save(task);
+	    return savedTask;
+	}
 
 }
