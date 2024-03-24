@@ -104,5 +104,17 @@ public class TaskController {
         Taskitems savedTask = taskrepo.save(existingTask);
         return ResponseEntity.ok(savedTask);
     }
+	
+	// find by any attribute
+	@GetMapping("/attributes")
+	public List<Taskitems> getTaskByAttributes(
+			 @RequestParam(required = false) String description,
+			 @RequestParam(required = false) String status,
+			 @RequestParam(required = false) String priority,
+			 @RequestParam(required = false) String category			 
+			) {
+		return taskservice.findByAttributes(description, status, priority, category);
+		
+	}
 
 }

@@ -20,5 +20,8 @@ public interface TaskRepo extends JpaRepository<Taskitems, Long>{
 	public List<Taskitems> findByPriority(String priority);
 	public List<Taskitems> findByCategory(String category);
 	
+	// find by any attribute
+	public List<Taskitems> findByDescriptionIgnoreCaseOrStatusIgnoreCaseOrPriorityIgnoreCaseOrCategoryIgnoreCase(String description, 
+			String status, String priority, String category);
 
 }

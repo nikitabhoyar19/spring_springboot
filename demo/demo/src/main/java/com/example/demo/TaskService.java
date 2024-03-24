@@ -109,5 +109,10 @@ public class TaskService {
 	    Taskitems savedTask = taskrepo.save(task);
 	    return savedTask;
 	}
+	
+	// Retrieve by anything mention i.e by description or by status or by priority or by category
+	public List<Taskitems> findByAttributes(String description, String status, String priority,  String category) {
+		return taskrepo.findByDescriptionIgnoreCaseOrStatusIgnoreCaseOrPriorityIgnoreCaseOrCategoryIgnoreCase(description, status, priority, category);
+	}
 
 }
