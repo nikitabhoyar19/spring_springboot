@@ -40,5 +40,6 @@ public class TasksService {
 
     public void deleteTask(Long id){
         tasksRepository.deleteById(id);
+        System.out.println("Task {id} deleted");
     }
 }
