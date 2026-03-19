@@ -26,4 +26,28 @@ public class StudentServiceImpl implements StudentService{
                 .collect(Collectors.toList());
         return studentDtos;
     }
+
+    @Override
+    public Student createStudent(Student student) {
+        return studentRepository.save(student);
+    }
+
+    @Override
+    public Student updateStudent(Long id, Student student) {
+
+        Student existentStudent = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found" + id));
+
+        existentStudent.setFirstname(student.getFirstname());
+        existentStudent.setLastname(student.getLastname());
+        existentStudent.setEmail(student.getEmail());
+        return studentRepository.save(existentStudent);
+    }
+
+    @Override
+    public String deleteStudent(long id) {
+        Student existStudentWithId = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found here with " + id));
+
+        studentRepository.delete(existStudentWithId);
+        return "student is deleted";
+    }
 }
