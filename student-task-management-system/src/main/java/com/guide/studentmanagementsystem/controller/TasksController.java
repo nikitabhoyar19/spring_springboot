@@ -1,5 +1,7 @@
 package com.guide.studentmanagementsystem.controller;
 
+import com.guide.studentmanagementsystem.entity.TaskRequestDTO;
+import com.guide.studentmanagementsystem.entity.TaskResponseDTO;
 import com.guide.studentmanagementsystem.entity.Tasks;
 import com.guide.studentmanagementsystem.service.TasksService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,30 +16,66 @@ public class TasksController {
     @Autowired
     public TasksService tasksService;
 
+//    @PostMapping
+//    public Tasks create(@RequestBody Tasks tasks) {
+//        return tasksService.createTask(tasks);
+//    }
+
     @PostMapping
-    public Tasks create(@RequestBody Tasks tasks) {
-        return tasksService.createTask(tasks);
+    public TaskResponseDTO create(@RequestBody TaskRequestDTO dto) {
+        Tasks task = tasksService.convertToEntity(dto);
+        Tasks saved = tasksService.createTask(task);
+        return tasksService.convertToResponse(saved);
     }
+
+//    @GetMapping
+//    public List<Tasks> getAllTasks(){
+//        return tasksService.getAllTasks();
+//    }
 
     @GetMapping
-    public List<Tasks> getAllTasks(){
-        return tasksService.getAllTasks();
+    public List<TaskResponseDTO> getAllTasks(){
+        List<Tasks> tasks = tasksService.getAllTasks();
+        return tasks.stream().map(tasksService::convertToResponse).toList();
     }
+
+//    @GetMapping("/{id}")
+//    public Tasks getTaskById(@PathVariable Long id){
+//        return tasksService.getTaskById(id);
+//    }
 
     @GetMapping("/{id}")
-    public Tasks getTaskById(@PathVariable Long id){
-        return tasksService.getTaskById(id);
+    public TaskResponseDTO getTaskById(@PathVariable Long id){
+        Tasks tasks = tasksService.getTaskById(id);
+        return tasksService.convertToResponse(tasks);
     }
 
+
+//    @PutMapping("/{id}")
+//    public String taskUpdate(@RequestBody Tasks tasks, @PathVariable Long id){
+//        tasksService.updateTask(tasks, id);
+//        return "Task is updated";
+//    }
+
     @PutMapping("/{id}")
-    public String taskUpdate(@RequestBody Tasks tasks, @PathVariable Long id){
-        tasksService.updateTask(tasks, id);
+    public String taskUpdate(@RequestBody TaskRequestDTO dto, @PathVariable Long id){
+        Tasks task = tasksService.convertToEntity(dto);
+        Tasks updated = tasksService.createTask(task);
+        tasksService.convertToResponse(updated);
         return "Task is updated";
     }
 
+//    @DeleteMapping("/{id}")
+//    public void deleteTask(@PathVariable Long id){
+//        tasksService.deleteTask(id);
+//    }
+
+    // DELETE Task
+    // No DTO needed (unless you want custom response)
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id){
+    public String delete(@PathVariable Long id) {
         tasksService.deleteTask(id);
+        return "Task deleted successfully";
     }
 
 }
