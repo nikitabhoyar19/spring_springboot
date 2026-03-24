@@ -21,11 +21,16 @@ public class TasksController {
 //        return tasksService.createTask(tasks);
 //    }
 
+//    @PostMapping
+//    public TaskResponseDTO create(@RequestBody TaskRequestDTO dto) {
+//        Tasks task = tasksService.convertToEntity(dto);
+//        Tasks saved = tasksService.createTask(task);
+//        return tasksService.convertToResponse(saved);
+//    }
+
     @PostMapping
     public TaskResponseDTO create(@RequestBody TaskRequestDTO dto) {
-        Tasks task = tasksService.convertToEntity(dto);
-        Tasks saved = tasksService.createTask(task);
-        return tasksService.convertToResponse(saved);
+        return tasksService.createTask(dto);
     }
 
 //    @GetMapping
@@ -57,12 +62,17 @@ public class TasksController {
 //        return "Task is updated";
 //    }
 
+//    @PutMapping("/{id}")
+//    public String taskUpdate(@RequestBody TaskRequestDTO dto, @PathVariable Long id){
+//        Tasks updated = tasksService.updateTask(id, dto);
+//        tasksService.convertToResponse(updated);
+//        return "Task is updated";
+//    }
+
     @PutMapping("/{id}")
-    public String taskUpdate(@RequestBody TaskRequestDTO dto, @PathVariable Long id){
-        Tasks task = tasksService.convertToEntity(dto);
-        Tasks updated = tasksService.createTask(task);
-        tasksService.convertToResponse(updated);
-        return "Task is updated";
+    public TaskResponseDTO update(@PathVariable Long id,
+                                  @RequestBody TaskRequestDTO dto) {
+        return tasksService.updateTask(id, dto);
     }
 
 //    @DeleteMapping("/{id}")

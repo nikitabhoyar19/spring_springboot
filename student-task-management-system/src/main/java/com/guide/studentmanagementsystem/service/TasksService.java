@@ -4,6 +4,7 @@ import com.guide.studentmanagementsystem.entity.TaskRequestDTO;
 import com.guide.studentmanagementsystem.entity.TaskResponseDTO;
 import com.guide.studentmanagementsystem.entity.TaskStatus;
 import com.guide.studentmanagementsystem.entity.Tasks;
+import com.guide.studentmanagementsystem.mapper.TaskMapper;
 import com.guide.studentmanagementsystem.repository.TasksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.config.Task;
@@ -19,9 +20,12 @@ public class TasksService {
     @Autowired
     private TasksRepository tasksRepository;
 
-    public Tasks createTask(Tasks task) {
-        return tasksRepository.save(task);
-    }
+    @Autowired
+    private TaskMapper mapper;
+
+//    public Tasks createTask(Tasks task) {
+//        return tasksRepository.save(task);
+//    }
 
     public Tasks convertToEntity(TaskRequestDTO dto) {
         Tasks task = new Tasks();
@@ -31,6 +35,13 @@ public class TasksService {
         task.setPriority(dto.getPriority());
         task.setDueDate(dto.getDueDate());
         return task;
+    }
+
+    // mapstruct mapping
+    public TaskResponseDTO createTask(TaskRequestDTO dto) {
+        Tasks task = mapper.toEntity(dto);
+        Tasks saved = tasksRepository.save(task);
+        return mapper.toResponse(saved);
     }
 
     public TaskResponseDTO convertToResponse(Tasks task) {
@@ -52,27 +63,45 @@ public class TasksService {
         return tasksRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
     }
 
-//    public Tasks updateTask(Tasks tasks, Long id) {
-//        Tasks existingTask = getTaskById(id);
-//        existingTask.setTitle(tasks.getTitle());
-//        existingTask.setDescription(tasks.getDescription());
-//        existingTask.setTaskStatus(tasks.getTaskStatus());
-//        existingTask.setPriority(tasks.getPriority());
-//        existingTask.setDueDate(tasks.getDueDate());
-//        return tasksRepository.save(existingTask);
-//    }
+    // mapstruct
+    public TaskResponseDTO getTaskMapStructOneById(Long id) {
+        Tasks task = tasksRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        return mapper.toResponse(task);
+    }
 
-    public Tasks updateTask(Long id, TaskRequestDTO dto) {
+    // without mapper
+    //    public Tasks updateTask(Tasks tasks, Long id) {
+    //        Tasks existingTask = getTaskById(id);
+    //        existingTask.setTitle(tasks.getTitle());
+    //        existingTask.setDescription(tasks.getDescription());
+    //        existingTask.setTaskStatus(tasks.getTaskStatus());
+    //        existingTask.setPriority(tasks.getPriority());
+    //        existingTask.setDueDate(tasks.getDueDate());
+    //        return tasksRepository.save(existingTask);
+    //    }
+
+    // manual mapper
+    //    public Tasks updateTask(Long id, TaskRequestDTO dto) {
+    //        Tasks task = tasksRepository.findById(id)
+    //                .orElseThrow(() -> new RuntimeException("Task not found"));
+    //
+    //        task.setTitle(dto.getTitle());
+    //        task.setDescription(dto.getDescription());
+    //        task.setTaskStatus(TaskStatus.valueOf(dto.getTaskStatus()));
+    //        task.setPriority(dto.getPriority());
+    //        task.setDueDate(dto.getDueDate());
+    //
+    //        return tasksRepository.save(task);
+    //    }
+
+    public TaskResponseDTO updateTask(Long id, TaskRequestDTO dto) {
         Tasks task = tasksRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        task.setTitle(dto.getTitle());
-        task.setDescription(dto.getDescription());
-        task.setTaskStatus(TaskStatus.valueOf(dto.getTaskStatus()));
-        task.setPriority(dto.getPriority());
-        task.setDueDate(dto.getDueDate());
+        mapper.updateTaskFromDto(dto, task); // 🔥 auto update
 
-        return tasksRepository.save(task);
+        Tasks updated = tasksRepository.save(task);
+        return mapper.toResponse(updated);
     }
 
     public void deleteTask(Long id){
