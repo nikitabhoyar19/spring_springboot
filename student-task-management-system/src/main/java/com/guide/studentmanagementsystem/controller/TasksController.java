@@ -4,6 +4,7 @@ import com.guide.studentmanagementsystem.entity.TaskRequestDTO;
 import com.guide.studentmanagementsystem.entity.TaskResponseDTO;
 import com.guide.studentmanagementsystem.entity.Tasks;
 import com.guide.studentmanagementsystem.service.TasksService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class TasksController {
 //    }
 
     @PostMapping
-    public TaskResponseDTO create(@RequestBody TaskRequestDTO dto) {
+    public TaskResponseDTO create(@Valid @RequestBody TaskRequestDTO dto) {
         return tasksService.createTask(dto);
     }
 
