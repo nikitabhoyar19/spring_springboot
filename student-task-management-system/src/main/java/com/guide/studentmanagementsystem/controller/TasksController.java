@@ -6,6 +6,7 @@ import com.guide.studentmanagementsystem.entity.Tasks;
 import com.guide.studentmanagementsystem.service.TasksService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,6 +55,17 @@ public class TasksController {
     public TaskResponseDTO getTaskById(@PathVariable Long id){
         Tasks tasks = tasksService.getTaskById(id);
         return tasksService.convertToResponse(tasks);
+    }
+
+    @GetMapping
+    public Page<TaskResponseDTO> getTasks(
+            @RequestParam(required = false) String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return tasksService.getTasks(title, page, size, sortBy, direction);
     }
 
 
