@@ -57,7 +57,7 @@ public class TasksController {
         return tasksService.convertToResponse(tasks);
     }
 
-    @GetMapping
+    @GetMapping("/filter")
     public Page<TaskResponseDTO> getTasks(
             @RequestParam(required = false) String title,
             @RequestParam(defaultValue = "0") int page,
